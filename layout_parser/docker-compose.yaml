@@ -1,0 +1,12 @@
+version: "3.8"
+services:
+  parser:
+    build: .
+    volumes:
+      - type: bind
+        source: ./in
+        target: /in
+      - type: bind
+        source: ./out
+        target: /out
+    command: python parse_image.py
