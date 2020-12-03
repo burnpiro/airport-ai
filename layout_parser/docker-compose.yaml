@@ -2,6 +2,8 @@ version: "3.8"
 services:
   parser:
     build: .
+    environment:
+      - OBJECT_COLORS=248,206,204 restaurant;218,232,252 shop;213,232,212 general;225,213,231 services;204,204,204 route
     volumes:
       - type: bind
         source: ./in
