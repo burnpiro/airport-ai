@@ -4,6 +4,7 @@ import glob
 import os
 
 import numpy as np
+from no_indent import NoIndent, NoIndentEncoder
 
 COLORS = os.getenv("OBJECT_COLORS")
 # COLORS = "248,206,204 restaurant;218,232,252 shop;213,232,212 general;225,213,231 services;204,204,204 route"
@@ -83,10 +84,10 @@ for file in glob.glob("/in/*"):
     cv2.imwrite(f"/out/layout-{name}", originalImage)
 
     out = {
-        "contour": contour_to_list(cnt),
-        "objects": {k: list(map(contour_to_list, v)) for k, v in objects.items()},
+        "contour": NoIndent(contour_to_list(cnt)),
+        "objects": {k: NoIndent(list(map(contour_to_list, v))) for k, v in objects.items()},
         "image-size": [originalImage.shape[1], originalImage.shape[0]],
     }
 
     with open(f"/out/{name}.json", "w") as write_file:
-        json.dump(out, write_file, indent=2)
+        write_file.write(json.dumps(out, indent=2, sort_keys=True, cls=NoIndentEncoder))
