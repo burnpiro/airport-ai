@@ -43,7 +43,10 @@ def parse_objects(img: np.ndarray):
             mask, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE
         )
         filtered = filter_min_contour(contours)
-        items[object_color[1]] = filtered
+        items[object_color[1]] = {
+            "points": filtered,
+            "color": "#%02x%02x%02x" % (int(color[0]), int(color[1]), int(color[2])),
+        }
 
     return items
 
@@ -75,7 +78,7 @@ for file in glob.glob("/in/*"):
 
     for idx, item in objects.items():
         canv = originalImage.copy()
-        cv2.drawContours(canv, item, -1, (0, 0, 255), 3)
+        cv2.drawContours(canv, item["points"], -1, (0, 0, 255), 3)
         cv2.imwrite(f"out/{idx}-{name}", canv)
 
     cv2.drawContours(originalImage, [cnt], 0, (0, 0, 255), 3)
@@ -85,7 +88,13 @@ for file in glob.glob("/in/*"):
 
     out = {
         "contour": NoIndent(contour_to_list(cnt)),
-        "objects": {k: NoIndent(list(map(contour_to_list, v))) for k, v in objects.items()},
+        "objects": {
+            k: {
+                "points": NoIndent(list(map(contour_to_list, v["points"]))),
+                "color": v["color"],
+            }
+            for k, v in objects.items()
+        },
         "image-size": [originalImage.shape[1], originalImage.shape[0]],
     }
 
