@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 
 const CTRL_KEY_IDX = 17;
+const ZOOM_UP_LIMIT = 3.5;
+const ZOOM_DOWN_LIMIT = 0.3;
 
 function useScrollZoom(defaultZoom = 0.5) {
   const [scroll, setScroll] = useState(defaultZoom);
@@ -25,9 +27,9 @@ function useScrollZoom(defaultZoom = 0.5) {
         const delta =
           (event.deltaY || -event.wheelDelta || event.detail) >> 10 || 1;
         const changedScroll =
-          delta < 0 && scroll < 1.8
+          delta < 0 && scroll < ZOOM_UP_LIMIT
             ? scroll + 0.1
-            : delta > 0 && scroll > 0.3
+            : delta > 0 && scroll > ZOOM_DOWN_LIMIT
             ? scroll - 0.1
             : scroll;
         setScroll(changedScroll);
