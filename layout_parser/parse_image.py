@@ -1,5 +1,6 @@
 import cv2
 import json
+import uuid
 import glob
 import os
 
@@ -45,6 +46,7 @@ def parse_objects(img: np.ndarray):
         filtered = filter_min_contour(contours)
         items[object_color[1]] = {
             "points": filtered,
+            "ids": list(map(lambda x: uuid.uuid4().hex, filtered)),
             "color": "#%02x%02x%02x" % (int(color[0]), int(color[1]), int(color[2])),
         }
 
@@ -91,6 +93,7 @@ for file in glob.glob("/in/*"):
         "objects": {
             k: {
                 "points": NoIndent(list(map(contour_to_list, v["points"]))),
+                "ids": NoIndent(v["ids"]),
                 "color": v["color"],
             }
             for k, v in objects.items()
