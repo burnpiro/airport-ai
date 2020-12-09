@@ -3,7 +3,8 @@ services:
   parser:
     build: .
     environment:
-      - OBJECT_COLORS=248,206,204 restaurant;218,232,252 shop;213,232,212 general;225,213,231 services;204,204,204 route
+      - OBJECT_COLORS=248,206,204 restaurant;218,232,252 shop;213,232,212 general;225,213,231 services;204,204,204 route;245,245,245 checkin;204,0,204 toilets nofill;153,255,255 info
+      - SMALL_ITEMS=0,0,0 chair nofill 5000 6000;221,221,221 lines
     volumes:
       - type: bind
         source: ./in
