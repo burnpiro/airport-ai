@@ -1,22 +1,22 @@
 {
   "files": {
     "main.css": "/airport-ai/static/css/main.b4965327.chunk.css",
-    "main.js": "/airport-ai/static/js/main.e91c97fd.chunk.js",
-    "main.js.map": "/airport-ai/static/js/main.e91c97fd.chunk.js.map",
+    "main.js": "/airport-ai/static/js/main.23ef9201.chunk.js",
+    "main.js.map": "/airport-ai/static/js/main.23ef9201.chunk.js.map",
     "runtime-main.js": "/airport-ai/static/js/runtime-main.03ce8c28.js",
     "runtime-main.js.map": "/airport-ai/static/js/runtime-main.03ce8c28.js.map",
-    "static/js/2.384f0561.chunk.js": "/airport-ai/static/js/2.384f0561.chunk.js",
-    "static/js/2.384f0561.chunk.js.map": "/airport-ai/static/js/2.384f0561.chunk.js.map",
+    "static/js/2.2c5530e0.chunk.js": "/airport-ai/static/js/2.2c5530e0.chunk.js",
+    "static/js/2.2c5530e0.chunk.js.map": "/airport-ai/static/js/2.2c5530e0.chunk.js.map",
     "static/js/3.2d939170.chunk.js": "/airport-ai/static/js/3.2d939170.chunk.js",
     "static/js/3.2d939170.chunk.js.map": "/airport-ai/static/js/3.2d939170.chunk.js.map",
     "index.html": "/airport-ai/index.html",
     "static/css/main.b4965327.chunk.css.map": "/airport-ai/static/css/main.b4965327.chunk.css.map",
-    "static/js/2.384f0561.chunk.js.LICENSE.txt": "/airport-ai/static/js/2.384f0561.chunk.js.LICENSE.txt"
+    "static/js/2.2c5530e0.chunk.js.LICENSE.txt": "/airport-ai/static/js/2.2c5530e0.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.03ce8c28.js",
-    "static/js/2.384f0561.chunk.js",
+    "static/js/2.2c5530e0.chunk.js",
     "static/css/main.b4965327.chunk.css",
-    "static/js/main.e91c97fd.chunk.js"
+    "static/js/main.23ef9201.chunk.js"
   ]
 }
