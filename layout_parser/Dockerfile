@@ -1,6 +1,6 @@
 FROM jjanzic/docker-python3-opencv
 
-RUN pip install absl
+RUN pip install absl-py
 
 ADD parse_image.py .
 ADD no_indent.py .
