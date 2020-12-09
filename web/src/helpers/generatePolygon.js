@@ -11,8 +11,8 @@ export default function generatePolygon(
   const maxY = Math.max(...points.map((point) => point[1]));
 
   const style = {
-    fill: color,
-    stroke: border,
+    fill: fill ? color : 'transparent',
+    stroke: fill ? border : color,
     strokeWidth: borderWidth,
     fillRule: fill ? "nonzero" : "evenodd",
   };

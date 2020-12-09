@@ -36,10 +36,10 @@ export default function Simulation({ settings, children }) {
       <div
         className={classes.layout}
         style={{
-          transform: `scale(${Number(scale).toFixed(1)}) translate(-${Math.max(
+          transform: `translate(-${Math.max(
             0,
             parseInt(translateWidth)
-          )}px, -${Math.max(0, parseInt(translateHeight))}px)`,
+          )}px, -${Math.max(0, parseInt(translateHeight))}px) scale(${Number(scale).toFixed(1)})`,
           clipPath: clipPath,
           width: layout["image-size"][0],
           height: layout["image-size"][1],
@@ -50,7 +50,15 @@ export default function Simulation({ settings, children }) {
             key={name}
             points={objDef.points}
             ids={objDef.ids}
-            config={{ ...defaultPointConfig, color: objDef.color }}
+            config={{ ...defaultPointConfig, color: objDef.color, fill: objDef.fill }}
+          />
+        ))}
+        {Object.entries(layout.items).map(([name, objDef]) => (
+          <Layer
+            key={name}
+            points={objDef.points}
+            ids={objDef.ids}
+            config={{ ...defaultPointConfig, color: objDef.color, fill: objDef.fill }}
           />
         ))}
       </div>

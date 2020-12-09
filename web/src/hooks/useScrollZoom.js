@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 
 const CTRL_KEY_IDX = 17;
 const ZOOM_UP_LIMIT = 3.5;
-const ZOOM_DOWN_LIMIT = 0.3;
+const ZOOM_DOWN_LIMIT = 0.2;
 
 function useScrollZoom(defaultZoom = 0.5) {
   const [scroll, setScroll] = useState(defaultZoom);
