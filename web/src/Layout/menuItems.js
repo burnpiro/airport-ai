@@ -1,43 +1,59 @@
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListSubheader from '@material-ui/core/ListSubheader';
-import DashboardIcon from '@material-ui/icons/Dashboard';
-import PeopleIcon from '@material-ui/icons/People';
-import BarChartIcon from '@material-ui/icons/BarChart';
-import LayersIcon from '@material-ui/icons/Layers';
-import AssignmentIcon from '@material-ui/icons/Assignment';
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListSubheader from "@material-ui/core/ListSubheader";
+import DashboardIcon from "@material-ui/icons/Dashboard";
+import PeopleIcon from "@material-ui/icons/People";
+import BarChartIcon from "@material-ui/icons/BarChart";
+import LayersIcon from "@material-ui/icons/Layers";
+import AssignmentIcon from "@material-ui/icons/Assignment";
 
-export const mainListItems = (
+export const mainListItems = ({ selected = [], onClick = () => {} }) => (
   <div>
-    <ListItem button>
+    <ListItem
+      button
+      onClick={() => onClick("dashboard")}
+      selected={selected.includes("dashboard")}
+    >
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>
       <ListItemText primary="Dashboard" />
     </ListItem>
-    <ListItem button>
+    <ListItem
+      button
+      onClick={() => onClick("agents")}
+      selected={selected.includes("agents")}
+    >
       <ListItemIcon>
         <PeopleIcon />
       </ListItemIcon>
       <ListItemText primary="Agents" />
     </ListItem>
-    <ListItem button>
+    <ListItem
+      button
+      onClick={() => onClick("analysis")}
+      selected={selected.includes("analysis")}
+    >
       <ListItemIcon>
         <BarChartIcon />
       </ListItemIcon>
       <ListItemText primary="Analysis" />
     </ListItem>
-    <ListItem button>
+    <ListItem
+      button
+      onClick={() => onClick("layers")}
+      selected={selected.includes("layers")}
+    >
       <ListItemIcon>
         <LayersIcon />
       </ListItemIcon>
-      <ListItemText primary="Integrations" />
+      <ListItemText primary="Layers" />
     </ListItem>
   </div>
 );
 
-export const secondaryListItems = (
+export const secondaryListItems = () => (
   <div>
     <ListSubheader inset>Saved reports</ListSubheader>
     <ListItem button>
