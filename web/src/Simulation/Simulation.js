@@ -14,10 +14,19 @@ const useStyles = makeStyles((theme) => ({
     overflow: "scroll",
     position: "relative",
   },
-  layout: {
-    backgroundColor: "#fff1b8",
+  layoutContainer: {
     position: "relative",
     maxWidth: "none",
+
+  },
+  layout: {
+    backgroundColor: "#fff1b8",
+    position: "absolute",
+    top: 0
+  },
+  items: {
+    position: "absolute",
+    top: 0
   },
   infoBox: {
     position: "fixed",
@@ -91,51 +100,68 @@ export default function Simulation({
   return (
     <div className={classes.root} style={{}}>
       <div
-        className={classes.layout}
+        className={classes.layoutContainer}
         style={{
-          transform: `translate(-${Math.max(
-            0,
-            parseInt(translateWidth)
-          )}px, -${Math.max(0, parseInt(translateHeight))}px) scale(${Number(
-            scale
-          ).toFixed(1)})`,
-          clipPath: clipPath,
-          width: layout["image-size"][0],
-          height: layout["image-size"][1],
+          transform: `scale(${Number(scale).toFixed(1)})`,
         }}
       >
-        {Object.entries(layout.objects)
-          .filter(([name, conf]) => layersToShow.includes(name))
-          .map(([name, objDef]) => (
-            <Layer
-              key={name}
-              settings={{ name, elements: objDef.ids.length }}
-              points={objDef.points}
-              ids={objDef.ids}
-              onElementClick={selectElement}
-              config={{
-                ...defaultPointConfig,
-                color: objDef.color,
-                fill: objDef.fill,
-              }}
-            />
-          ))}
-        {Object.entries(layout.items)
-          .filter(([name, conf]) => layersToShow.includes(name))
-          .map(([name, objDef]) => (
-            <Layer
-              key={name}
-              settings={{ name, elements: objDef.ids.length }}
-              points={objDef.points}
-              ids={objDef.ids}
-              onElementClick={selectElement}
-              config={{
-                ...defaultPointConfig,
-                color: objDef.color,
-                fill: objDef.fill,
-              }}
-            />
-          ))}
+        <div
+          className={classes.layout}
+          style={{
+            clipPath: clipPath,
+            width: layout["image-size"][0],
+            height: layout["image-size"][1],
+            // transform: `translate(-${Math.max(
+            //   0,
+            //   parseInt(translateWidth)
+            // )}px, -${Math.max(0, parseInt(translateHeight))}px)`,
+          }}
+        >
+          {Object.entries(layout.objects)
+            .filter(([name, conf]) => layersToShow.includes(name))
+            .map(([name, objDef]) => (
+              <Layer
+                key={name}
+                settings={{ name, elements: objDef.ids.length }}
+                points={objDef.points}
+                ids={objDef.ids}
+                onElementClick={selectElement}
+                config={{
+                  ...defaultPointConfig,
+                  color: objDef.color,
+                  fill: objDef.fill,
+                }}
+              />
+            ))}
+        </div>
+        <div
+          className={classes.items}
+          style={{
+            width: layout["image-size"][0],
+            height: layout["image-size"][1],
+            // transform: `translate(-${Math.max(
+            //   0,
+            //   parseInt(translateWidth)
+            // )}px, -${Math.max(0, parseInt(translateHeight))}px)`,
+          }}
+        >
+          {Object.entries(layout.items)
+            .filter(([name, conf]) => layersToShow.includes(name))
+            .map(([name, objDef]) => (
+              <Layer
+                key={name}
+                settings={{ name, elements: objDef.ids.length }}
+                points={objDef.points}
+                ids={objDef.ids}
+                onElementClick={selectElement}
+                config={{
+                  ...defaultPointConfig,
+                  color: objDef.color,
+                  fill: objDef.fill,
+                }}
+              />
+            ))}
+        </div>
       </div>
       {showLayers && (
         <LayersList

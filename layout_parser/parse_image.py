@@ -15,13 +15,15 @@ from no_indent import NoIndent, NoIndentEncoder
 # SMALL_ITEMS = "0,0,0 planes;208,198,166 chair;221,221,221 lines"
 
 
-def filter_min_contour(contours, max_eps, eps=5.0):
+def filter_min_contour(contours, max_eps, eps=5.0, debug=False):
     filtered = []
     for contour in contours:
         rect = cv2.minAreaRect(contour)
         box = cv2.boxPoints(rect)
         box = np.int0(box)
         area = cv2.contourArea(box)
+        if debug:
+            print(area, box)
         if max_eps is not None and area > max_eps:
             continue
         if area > eps:
