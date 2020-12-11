@@ -17,16 +17,15 @@ const useStyles = makeStyles((theme) => ({
   layoutContainer: {
     position: "relative",
     maxWidth: "none",
-
   },
   layout: {
     backgroundColor: "#fff1b8",
     position: "absolute",
-    top: 0
+    top: 0,
   },
   items: {
     position: "absolute",
-    top: 0
+    top: 0,
   },
   infoBox: {
     position: "fixed",
@@ -95,8 +94,8 @@ export default function Simulation({
       (index !== layout.contour.length - 1 ? ", " : "")
     );
   }, "")})`;
-  const translateWidth = (layout["image-size"][0] * (1 - scale)) / 2;
-  const translateHeight = (layout["image-size"][1] * (1 - scale)) / 2;
+  // const translateWidth = (layout["image-size"][0] * (1 - scale)) / 2;
+  // const translateHeight = (layout["image-size"][1] * (1 - scale)) / 2;
   return (
     <div className={classes.root} style={{}}>
       <div
@@ -136,12 +135,14 @@ export default function Simulation({
         </div>
         <div
           className={classes.items}
-          style={{
-            // transform: `translate(-${Math.max(
-            //   0,
-            //   parseInt(translateWidth)
-            // )}px, -${Math.max(0, parseInt(translateHeight))}px)`,
-          }}
+          style={
+            {
+              // transform: `translate(-${Math.max(
+              //   0,
+              //   parseInt(translateWidth)
+              // )}px, -${Math.max(0, parseInt(translateHeight))}px)`,
+            }
+          }
         >
           {Object.entries(layout.items)
             .filter(([name, conf]) => layersToShow.includes(name))
