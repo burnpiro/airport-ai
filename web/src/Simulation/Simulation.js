@@ -137,8 +137,6 @@ export default function Simulation({
         <div
           className={classes.items}
           style={{
-            width: layout["image-size"][0],
-            height: layout["image-size"][1],
             // transform: `translate(-${Math.max(
             //   0,
             //   parseInt(translateWidth)
