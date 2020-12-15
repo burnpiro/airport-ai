@@ -45,7 +45,7 @@ async def step_simulation():
                 "id": str(i),
                 "x": int(x*size[0]),
                 "y": int(y*size[1])
-            } for i, (y, x) in enumerate(points)
+            } for i, (x, y) in enumerate(points)
         ],
         "flights": []
     }
