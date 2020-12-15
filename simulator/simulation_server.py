@@ -1,4 +1,4 @@
-from grid import get_grid
+from grid import get_grid, getTargetSize
 from Agent import Agent
 import websockets
 import asyncio
@@ -14,14 +14,15 @@ agents = [Agent(g) for _ in range(1000)]
 
 sockets = set()
 
+size = getTargetSize()
 
 async def send_or_remove(socket, data):
     '''
     Sends data with websocket. Removes disconected websockets from set
     '''
     try:
-        await socket.send(json.dumps(
-            [agent.get_pos() for agent in agents])
+        await socket.send(
+            json.dumps(data)
         )
     except:
         sockets.remove(socket)
@@ -41,9 +42,9 @@ async def step_simulation():
     data = {
         "passengers": [
             {
-                "id": i,
-                "x": x,
-                "y": y
+                "id": str(i),
+                "x": int(x*size[0]),
+                "y": int(y*size[1])
             } for i, (y, x) in enumerate(points)
         ],
         "flights": []
@@ -53,7 +54,7 @@ async def step_simulation():
         loop.create_task(
             send_or_remove(
                 socket,
-                json.dumps(data)
+                data
             )
         )
 

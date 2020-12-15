@@ -7,6 +7,10 @@ import json
 import networkx as nx
 import polytri
 
+def getTargetSize():
+    with open('layout.json') as f:
+        data = json.loads(f.read())
+    return data['image-size']
 
 def get_grid() -> nx.Graph:
     with open('layout.json') as f:

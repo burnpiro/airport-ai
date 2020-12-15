@@ -2,10 +2,10 @@ version: "3.8"
 services:
   web:
     build: ./web
-    volumes:
-      - type: bind
-        source: ./web
-        target: /app
+    # volumes:
+    #   - type: bind
+    #     source: C:\pwr II stopien\airport-ai\web
+    #     target: /app
     ports:
       - 3001:3000
     environment:
@@ -22,6 +22,8 @@ services:
     build: ./simulator
     ports:
       - 8081:8081
+    environment:
+      - FPS=10
     networks:
       mainnet: {}
 networks:
