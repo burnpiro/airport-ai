@@ -36,10 +36,24 @@ async def step_simulation():
     for agent in agents:
         agent.step()
 
+    points = [agent.get_pos() for agent in agents]
+
+    data = {
+        "passengers": [
+            {
+                "id": i,
+                "x": x,
+                "y": y
+            } for i, (y, x) in enumerate(points)
+        ],
+        "flights": []
+    }
+
     for socket in sockets:
         loop.create_task(
-            send_or_remove(socket, json.dumps(
-                [agent.get_pos() for agent in agents])
+            send_or_remove(
+                socket,
+                json.dumps(data)
             )
         )
 
