@@ -1,0 +1,22 @@
+version: "3.8"
+services:
+  web-prod:
+    build:
+     context: ./web
+     dockerfile: ProdDockerfile
+    ports:
+      - 1337:80
+    networks:
+      mainnet: {}
+    depends_on:
+      - simulator-prod
+  simulator-prod:
+    build: ./simulator
+    ports:
+      - 8081:8081
+    environment:
+      - FPS=4
+    networks:
+      mainnet: {}
+networks:
+  mainnet:

@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core/styles";
 const useStyles = makeStyles((theme) => ({
   pointStyle: {
     position: "absolute",
-    transition: "all 0.1s linear"
+    transition: "all 0.25s linear"
   },
 }));
 
