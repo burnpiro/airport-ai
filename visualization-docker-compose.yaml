@@ -12,10 +12,16 @@ services:
       - CHOKIDAR_USEPOLLING=true
     networks:
       mainnet: {}
-  testws:
-    image: ksdn117/web-socket-test
+  # testws:
+  #   image: ksdn117/web-socket-test
+  #   ports:
+  #     - 8081:8010
+  #   networks:
+  #     mainnet: {}
+  simulator:
+    build: ./simulator
     ports:
-      - 8081:8010
+      - 8081:8081
     networks:
       mainnet: {}
 networks:
