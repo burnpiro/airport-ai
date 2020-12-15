@@ -6,6 +6,7 @@ import json
 import os
 
 FPS = int(os.environ.get('FPS', 30))
+WS_PORT = int(os.environ.get('WS_PORT', 8081))
 
 g, mask = get_grid()
 
@@ -54,7 +55,7 @@ async def register_connection(websocket, path):
     await websocket.wait_closed()
 
 
-start_server = websockets.serve(register_connection, "0.0.0.0", 8080)
+start_server = websockets.serve(register_connection, "0.0.0.0", WS_PORT)
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_until_complete(step_simulation())
 asyncio.get_event_loop().run_forever()
