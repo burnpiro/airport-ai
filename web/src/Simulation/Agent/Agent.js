@@ -3,19 +3,20 @@ import { makeStyles } from "@material-ui/core/styles";
 const useStyles = makeStyles((theme) => ({
   pointStyle: {
     position: "absolute",
+    transition: "all 0.1s linear"
   },
 }));
 
-export default function Agent({ points, styles, position }) {
+export default function Agent({ styles, position, size }) {
   const classes = useStyles();
   return (
     <svg
       className={classes.pointStyle}
-      style={{ left: position.minX, top: position.minY }}
-      height={position.maxY - position.minY}
-      width={position.maxX - position.minX}
+      style={{ left: position.x, top: position.y }}
+      height={size}
+      width={size}
     >
-      <polygon points={points} style={styles} />
+      <circle cx={size/2} cy={size/2} r={size/2} style={styles} />
     </svg>
   );
 }
