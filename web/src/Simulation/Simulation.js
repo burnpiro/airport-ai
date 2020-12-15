@@ -6,6 +6,9 @@ import Layer from "./Layer/Layer";
 import { defaultPointConfig } from "../helpers/configs";
 import InfoBox from "./InfoBox/InfoBox";
 import LayersList from "./LayersList/LayersList";
+import { AgentLayer } from "./AgentLayer/AgentLayer";
+import CastConnectedIcon from '@material-ui/icons/CastConnected';
+import PortableWifiOffIcon from '@material-ui/icons/PortableWifiOff';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,7 +40,38 @@ const useStyles = makeStyles((theme) => ({
     top: theme.spacing(10),
     left: theme.spacing(10),
   },
+  connectionStatusContainer: {
+    position: "fixed",
+    top: theme.spacing(9),
+    right: theme.spacing(8),
+    width: "30px",
+    height: "30px",
+  },
 }));
+
+const ConnectionStatus = ({ status }) => {
+  const classes = useStyles();
+  switch (status) {
+    case "Open":
+      return (
+        <CastConnectedIcon
+          style={{
+            color: 'green'
+          }}
+          className={classes.connectionStatusContainer}
+        />
+      );
+    default:
+      return (
+        <PortableWifiOffIcon
+          style={{
+            color: 'red'
+          }}
+          className={classes.connectionStatusContainer}
+        />
+      );
+  }
+};
 
 const allLayers = [
   ...Object.keys(layout.objects).map((key) => ({
@@ -55,9 +89,10 @@ export default function Simulation({
   settings = { showLayers: false },
 }) {
   const classes = useStyles();
-  const scale = useScrollZoom(0.4);
+  const scale = useScrollZoom(0.1);
   const [selectedElement, setSelectedElement] = useState(null);
   const [showLayers, setShowLayers] = useState(settings.showLayers);
+  const [connectionStatus, setConnectionStatus] = useState(settings.showLayers);
   const [layersToShow, setLayersToShow] = useState([
     ...Object.keys(layout.objects),
     ...Object.keys(layout.items),
@@ -77,6 +112,10 @@ export default function Simulation({
 
   const closeLayers = () => {
     setShowLayers(false);
+  };
+
+  const onStatusChange = (newStatus) => {
+    setConnectionStatus(newStatus);
   };
 
   const layerToggle = (layer, value) => {
@@ -161,7 +200,11 @@ export default function Simulation({
               />
             ))}
         </div>
+        <div className={classes.items}>
+          <AgentLayer onConnectionStatusChange={onStatusChange} />
+        </div>
       </div>
+      <ConnectionStatus status={connectionStatus} />
       {showLayers && (
         <LayersList
           className={classes.layerList}
