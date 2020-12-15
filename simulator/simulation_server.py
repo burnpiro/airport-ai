@@ -6,6 +6,7 @@ import json
 import os
 
 FPS = int(os.environ.get('FPS', 30))
+FRAMESKIP = int(os.environ.get('FRAMESKIP', 10))
 WS_PORT = int(os.environ.get('WS_PORT', 8081))
 
 g, mask = get_grid()
@@ -34,8 +35,9 @@ async def step_simulation():
     '''
     loop = asyncio.get_event_loop()
 
-    for agent in agents:
-        agent.step()
+    for _ in range(FRAMESKIP):
+        for agent in agents:
+            agent.step()
 
     points = [agent.get_pos() for agent in agents]
 
