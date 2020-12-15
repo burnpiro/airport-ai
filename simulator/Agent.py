@@ -1,13 +1,7 @@
-from grid import get_grid
 import networkx as nx
 import random
 import math
 import numpy as np
-import pygame
-pygame.init()
-
-g, mask = get_grid()
-
 
 class Agent:
     def __init__(self, graph, pos=None) -> None:
@@ -42,37 +36,3 @@ class Agent:
     
     def  get_pos(self):
         return tuple(x for x in self.pos)
-
-
-agents = [Agent(g) for _ in range(1000)]
-for a in agents:
-    print(a.get_pos())
-screen_size = mask.shape
-screen = pygame.display.set_mode(screen_size)
-
-# map = pygame.image.load('assets/layout_small.png')
-map = pygame.surfarray.make_surface(mask*255)
-
-clock = pygame.time.Clock()
-
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-    screen.fill((255, 255, 255))
-    screen.blit(map, (0, 0))
-    for agent in agents:
-        # print(agent.pos)
-        agent_pos = agent.get_pos()
-        pos = int(agent_pos[0]*screen_size[0]), int(agent_pos[1]*screen_size[1])
-        pygame.draw.circle(screen, (0, 0, 255), pos, 2)
-        agent.step()
-
-    clock.tick(30)
-    pygame.display.flip()
-    # print(clock.get_fps())
-
-
-pygame.quit()
