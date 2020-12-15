@@ -2,20 +2,28 @@ version: "3.8"
 services:
   web:
     build: ./web
-    volumes:
-      - type: bind
-        source: ./web
-        target: /app
+    # volumes:
+    #   - type: bind
+    #     source: C:\pwr II stopien\airport-ai\web
+    #     target: /app
     ports:
       - 3001:3000
     environment:
       - CHOKIDAR_USEPOLLING=true
     networks:
       mainnet: {}
-  testws:
-    image: ksdn117/web-socket-test
+  # testws:
+  #   image: ksdn117/web-socket-test
+  #   ports:
+  #     - 8081:8010
+  #   networks:
+  #     mainnet: {}
+  simulator:
+    build: ./simulator
     ports:
-      - 8081:8010
+      - 8081:8081
+    environment:
+      - FPS=10
     networks:
       mainnet: {}
 networks:

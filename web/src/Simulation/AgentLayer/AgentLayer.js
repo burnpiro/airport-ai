@@ -37,12 +37,10 @@ export const AgentLayer = ({ onConnectionStatusChange }) => {
   }, [connectionStatus, onConnectionStatusChange]);
 
   const listOfAgents =
-    (lastMessage &&
-      typeof lastMessage.data === "object" &&
-      Array.isArray(lastMessage.data.passengers) &&
-      lastMessage.data.passengers) ||
-    [];
-  const agents = generateAgents(listOfAgents).map((data, id) => {
+    JSON.parse(lastMessage && lastMessage.data &&
+      typeof lastMessage.data === "string" ?  lastMessage.data : '{ "passengers": [] }');
+
+  const agents = generateAgents(listOfAgents.passengers || []).map((data, id) => {
     return (
       <Agent
         position={data.position}

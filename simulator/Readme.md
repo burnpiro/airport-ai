@@ -3,10 +3,12 @@
 To run simulator run:
 
 ```
-python run.py
+$ python run.py
 ```
 
-Points used to generate graph can be used with:
+Running simulation with docker:
+
 ```
-python create_points.py
+$ docker build . -t simulation
+$ docker run  -p 8081:8081 simulation
 ```
