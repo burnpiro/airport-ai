@@ -7,8 +7,8 @@ import { defaultPointConfig } from "../helpers/configs";
 import InfoBox from "./InfoBox/InfoBox";
 import LayersList from "./LayersList/LayersList";
 import { AgentLayer } from "./AgentLayer/AgentLayer";
-import CastConnectedIcon from '@material-ui/icons/CastConnected';
-import PortableWifiOffIcon from '@material-ui/icons/PortableWifiOff';
+import CastConnectedIcon from "@material-ui/icons/CastConnected";
+import PortableWifiOffIcon from "@material-ui/icons/PortableWifiOff";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -56,7 +56,7 @@ const ConnectionStatus = ({ status }) => {
       return (
         <CastConnectedIcon
           style={{
-            color: 'green'
+            color: "green",
           }}
           className={classes.connectionStatusContainer}
         />
@@ -65,7 +65,7 @@ const ConnectionStatus = ({ status }) => {
       return (
         <PortableWifiOffIcon
           style={{
-            color: 'red'
+            color: "red",
           }}
           className={classes.connectionStatusContainer}
         />
@@ -96,6 +96,7 @@ export default function Simulation({
   const [layersToShow, setLayersToShow] = useState([
     ...Object.keys(layout.objects),
     ...Object.keys(layout.items),
+    'gates'
   ]);
 
   useEffect(() => {
@@ -133,8 +134,6 @@ export default function Simulation({
       (index !== layout.contour.length - 1 ? ", " : "")
     );
   }, "")})`;
-  // const translateWidth = (layout["image-size"][0] * (1 - scale)) / 2;
-  // const translateHeight = (layout["image-size"][1] * (1 - scale)) / 2;
   return (
     <div className={classes.root} style={{}}>
       <div
@@ -149,10 +148,6 @@ export default function Simulation({
             clipPath: clipPath,
             width: layout["image-size"][0],
             height: layout["image-size"][1],
-            // transform: `translate(-${Math.max(
-            //   0,
-            //   parseInt(translateWidth)
-            // )}px, -${Math.max(0, parseInt(translateHeight))}px)`,
           }}
         >
           {Object.entries(layout.objects)
@@ -172,18 +167,26 @@ export default function Simulation({
               />
             ))}
         </div>
-        <div
-          className={classes.items}
-          style={
-            {
-              // transform: `translate(-${Math.max(
-              //   0,
-              //   parseInt(translateWidth)
-              // )}px, -${Math.max(0, parseInt(translateHeight))}px)`,
-            }
-          }
-        >
+        <div className={classes.items}>
           {Object.entries(layout.items)
+            .filter(([name, conf]) => layersToShow.includes(name))
+            .map(([name, objDef]) => (
+              <Layer
+                key={name}
+                settings={{ name, elements: objDef.ids.length }}
+                points={objDef.points}
+                ids={objDef.ids}
+                onElementClick={selectElement}
+                config={{
+                  ...defaultPointConfig,
+                  color: objDef.color,
+                  fill: objDef.fill,
+                }}
+              />
+            ))}
+        </div>
+        <div className={classes.items}>
+          {[["gates", layout.gates]]
             .filter(([name, conf]) => layersToShow.includes(name))
             .map(([name, objDef]) => (
               <Layer
