@@ -22,6 +22,8 @@ It should generate 2+ files for every layout file in `layout_parser/in/` folder:
 - `SMALL_ITEMS` as a list of colors per object type `R,G,B object_name;R,G,B object_name fill min_size max_size` (More details in [Object definition](#object-string-type-definition)), this should be a definition of small objects only because it has max set to be 0.1% of the layout area.
 - `OBJECTS_EPS` min part of the image that large objects should take to be considered ab `object` (0.01 means 1% of the image) (defaults to 0.01%)
 - `SMALL_ITEMS_EPS` min part of the image that small item objects should take to be considered an `small object` (0.01 means 1% of the image) (defaults to 0%)
+- `GATES` RGB color for gate on image (defaults to `204,0,0`)
+- `GATE_IDS` coma separated values assigned to gates (in detection order) instead of simple incremental integers. Has to be the same size as number of gates on the image
 
 ##### Object string type definition:
 `R,G,B name fill min_size max_size`

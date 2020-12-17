@@ -102,6 +102,15 @@ def parse_objects(img: np.ndarray, colors, eps=0.01, max_eps=1.0):
 
     return items
 
+def parse_gates(img: np.ndarray, colors, ids = '', eps=0.01, max_eps=1.0):
+    gates = parse_objects(img, f'{colors} gates', eps, max_eps)['gates']
+    if ids == '':
+        gates['ids'] = list(range(1, len(gates['ids']) + 1))
+    if ids != '':
+        gates['ids'] = ids.split(',')
+
+    return gates
+
 
 # def parse_items(img: np.ndarray):
 #     hsv_img = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
@@ -183,6 +192,16 @@ flags.DEFINE_string(
     "0.0",
     "min percent of an image that has to be covered by the small object",
 )
+flags.DEFINE_string(
+    "gate_color",
+    "204,0,0",
+    "RGB value for default gate color",
+)
+flags.DEFINE_string(
+    "gate_ids",
+    "",
+    "list of coma separated values assigned to gates i.e. 1,2,3,4,5,6,7 (by default it just increments integers), this has to equal number of gates",
+)
 
 
 def main(_argv):
@@ -194,6 +213,10 @@ def main(_argv):
         FLAGS.eps_large = os.getenv("OBJECTS_EPS")
     if type(os.getenv("SMALL_ITEMS_EPS")) == float:
         FLAGS.eps_small = os.getenv("SMALL_ITEMS_EPS")
+    if type(os.getenv("GATES")) == str and len(os.getenv("GATES")) > 0:
+        FLAGS.gate_color = os.getenv("GATES")
+    if type(os.getenv("GATE_IDS")) == str and len(os.getenv("GATE_IDS")) > 0:
+        FLAGS.gate_ids = os.getenv("GATE_IDS")
 
     for file in glob.glob("in/*"):
         name = file.split("/")[-1]
@@ -203,6 +226,7 @@ def main(_argv):
         cnt = parse_layout(originalImage)
         objects = parse_objects(originalImage, FLAGS.objects, eps=float(FLAGS.eps_large))
         small_items = parse_objects(originalImage, FLAGS.small_objects, eps=float(FLAGS.eps_small), max_eps=float(FLAGS.eps_large))
+        gates = parse_gates(originalImage, FLAGS.gate_color, FLAGS.gate_ids, eps=float(FLAGS.eps_small))
 
         for idx, item in objects.items():
             canv = originalImage.copy()
@@ -213,6 +237,10 @@ def main(_argv):
             canv = originalImage.copy()
             cv2.drawContours(canv, item["points"], -1, (0, 0, 255), 3)
             cv2.imwrite(f"out/{idx}-{name}", canv)
+
+        canv = originalImage.copy()
+        cv2.drawContours(canv, gates["points"], -1, (0, 0, 255), 3)
+        cv2.imwrite(f"out/gates-{name}", canv)
 
         cv2.drawContours(originalImage, [cnt], 0, (0, 0, 255), 3)
         # cv2.imshow('img1', originalImage)
@@ -238,6 +266,12 @@ def main(_argv):
                     "color": v["color"],
                 }
                 for k, v in small_items.items()
+            },
+            "gates": {
+                "points": NoIndent(list(map(contour_to_list, gates["points"]))),
+                "ids": NoIndent(gates["ids"]),
+                "fill": gates["fill"],
+                "color": gates["color"],
             },
             "image-size": [originalImage.shape[1], originalImage.shape[0]],
         }

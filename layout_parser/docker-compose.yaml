@@ -5,6 +5,8 @@ services:
     environment:
       - OBJECT_COLORS=248,206,204 restaurant;218,232,252 shop;213,232,212 general;225,213,231 services;204,204,204 route;245,245,245 checkin;204,0,204 toilets nofill;153,255,255 info;0,76,153 rest-space nofill
       - SMALL_ITEMS=221,221,221 lines;0,0,0 planes nofill 170000 200000
+      - GATES=204,0,0
+      - GATE_IDS=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29
     volumes:
       - type: bind
         source: ./in
