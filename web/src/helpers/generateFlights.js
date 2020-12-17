@@ -4,10 +4,8 @@ export default function generateFlights(
   flightData = [],
   config = defaultFlightConfig
 ) {
-  const { color, border, borderWidth, fill } = config;
-
   return flightData.map((flight) => ({
-    ...defaultFlightConfig,
+    ...config,
     ...flight,
     date: new Date(flight.departure),
   }));
