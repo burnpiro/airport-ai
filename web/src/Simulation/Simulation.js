@@ -9,6 +9,7 @@ import LayersList from "./LayersList/LayersList";
 import { AgentLayer } from "./AgentLayer/AgentLayer";
 import CastConnectedIcon from "@material-ui/icons/CastConnected";
 import PortableWifiOffIcon from "@material-ui/icons/PortableWifiOff";
+import {TimeTable} from "./TimeTable/TimeTable";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -40,6 +41,11 @@ const useStyles = makeStyles((theme) => ({
     top: theme.spacing(10),
     left: theme.spacing(10),
   },
+  flightsList: {
+    position: "fixed",
+    top: theme.spacing(10),
+    left: theme.spacing(10),
+  },
   connectionStatusContainer: {
     position: "fixed",
     top: theme.spacing(9),
@@ -55,6 +61,7 @@ const ConnectionStatus = ({ status }) => {
     case "Open":
       return (
         <CastConnectedIcon
+          aria-label={"Connected with the server :)"}
           style={{
             color: "green",
           }}
@@ -64,6 +71,7 @@ const ConnectionStatus = ({ status }) => {
     default:
       return (
         <PortableWifiOffIcon
+          aria-label={"Cannot connect with the server :("}
           style={{
             color: "red",
           }}
@@ -86,7 +94,7 @@ const allLayers = [
 
 export default function Simulation({
   children,
-  settings = { showLayers: false },
+  settings = { showLayers: false, showFlights: false },
 }) {
   const classes = useStyles();
   const scale = useScrollZoom(0.1);
@@ -214,6 +222,12 @@ export default function Simulation({
           layers={allLayers}
           layersShown={layersToShow}
           onSelect={layerToggle}
+          onClose={closeLayers}
+        />
+      )}
+      {settings.showFlights && (
+        <TimeTable
+          className={classes.flightsList}
           onClose={closeLayers}
         />
       )}

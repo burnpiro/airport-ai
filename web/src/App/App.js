@@ -41,7 +41,7 @@ function App() {
   return (
     <Layout onMenuChange={onMenuChange} selectedMenu={state.selectedMenu}>
       <Simulation
-        settings={{ showLayers: state.selectedMenu.includes("layers") }}
+        settings={{ showLayers: state.selectedMenu.includes("layers"), showFlights: state.selectedMenu.includes("flights") }}
       />
     </Layout>
   );

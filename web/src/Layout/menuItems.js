@@ -4,7 +4,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import DashboardIcon from "@material-ui/icons/Dashboard";
 import PeopleIcon from "@material-ui/icons/People";
-import BarChartIcon from "@material-ui/icons/BarChart";
+import ListAltIcon from '@material-ui/icons/ListAlt';
 import LayersIcon from "@material-ui/icons/Layers";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 
@@ -32,13 +32,13 @@ export const mainListItems = ({ selected = [], onClick = () => {} }) => (
     </ListItem>
     <ListItem
       button
-      onClick={() => onClick("analysis")}
-      selected={selected.includes("analysis")}
+      onClick={() => onClick("flights")}
+      selected={selected.includes("flights")}
     >
       <ListItemIcon>
-        <BarChartIcon />
+        <ListAltIcon />
       </ListItemIcon>
-      <ListItemText primary="Analysis" />
+      <ListItemText primary="Flights" />
     </ListItem>
     <ListItem
       button
