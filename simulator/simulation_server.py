@@ -1,4 +1,4 @@
-from grid import get_grid, getTargetSize
+from simulation import Simulation, getTargetSize
 from Agent import Agent
 import websockets
 import asyncio
@@ -9,9 +9,7 @@ FPS = int(os.environ.get('FPS', 30))
 FRAMESKIP = int(os.environ.get('FRAMESKIP', 10))
 WS_PORT = int(os.environ.get('WS_PORT', 8081))
 
-g, mask = get_grid()
-
-agents = [Agent(g) for _ in range(1000)]
+sim = Simulation()
 
 sockets = set()
 
@@ -36,10 +34,9 @@ async def step_simulation():
     loop = asyncio.get_event_loop()
 
     for _ in range(FRAMESKIP):
-        for agent in agents:
-            agent.step()
+        sim.step()
 
-    points = [agent.get_pos() for agent in agents]
+    points = [agent.get_pos() for agent in sim.agents]
 
     data = {
         "passengers": [
@@ -49,7 +46,7 @@ async def step_simulation():
                 "y": int(y*size[1])
             } for i, (x, y) in enumerate(points)
         ],
-        "flights": []
+        "flights": sim.get_flights()
     }
 
     for socket in sockets:

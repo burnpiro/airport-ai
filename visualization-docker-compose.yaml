@@ -26,6 +26,8 @@ services:
       - 8081:8081
     environment:
       - FPS=2
+    volumes:
+      - ./simulator/cache:/simulator/cache
     networks:
       mainnet: {}
 networks:

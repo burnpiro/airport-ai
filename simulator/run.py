@@ -1,52 +1,50 @@
-from grid import get_grid
 import networkx as nx
 import random
 import math
 import numpy as np
 import pygame
+from simulation import Simulation
 pygame.init()
 
-g, mask = get_grid()
+# g = Grid()
+# mask = g.mask
 
 
-class Agent:
-    def __init__(self, graph, pos=None) -> None:
-        self.target = None
-        self.graph = graph
-        self.path = None
-        self.speed = 0.001
-        if pos:
-            self.pos = pos
-        else:
-            self.pos = random.choice(list(graph.nodes))
+# class Agent:
+#     def __init__(self, grid, pos=None) -> None:
+#         self.target = None
+#         self.path = None
+#         self.speed = 1
+#         self.grid = grid
+#         if pos:
+#             self.pos = pos
+#         else:
+#             self.pos = self.grid.random()
 
-    def step(self):
-        while self.target is None:
-            self.target = random.choice(list(self.graph.nodes))
-            self.path = nx.algorithms.shortest_paths.generic.shortest_path(
-                self.graph, source=self.pos, target=self.target)[1:]
-            if len(self.path)==0:
-                self.target = None
-
-        next_pos = self.path[0]
-        vec = (next_pos[0]-self.pos[0], next_pos[1]-self.pos[1])
-        l = math.sqrt(vec[0]**2+vec[1]**2)
-        if l <= self.speed:
-            self.pos = next_pos
-            self.path = self.path[1:]
-            if len(self.path) == 0:
-                self.target = None
-        else:
-            self.pos = (self.pos[0]+vec[0]/l*self.speed,
-                        self.pos[1]+vec[1]/l*self.speed)
+#     def step(self):
+#         while self.target is None:
+#             self.target = random.choice(self.grid.goals)
+#             self.path = self.grid.paths[tuple(self.target)]
+#             # print(self.path)
+#             if len(self.path)==0:
+#                 self.target = None
+#         # try:
+#         grid_pos = self.grid.pos_to_grid(self.pos)
+#         next_pos = self.path[tuple(grid_pos)]
+#         vec = np.array([next_pos[0]-self.pos[0], next_pos[1]-self.pos[1]])*self.speed
+#         self.pos += vec
+#         if grid_pos==self.target:
+#             self.target = None
     
-    def  get_pos(self):
-        return tuple(x for x in self.pos)
+#     def  get_pos(self):
+#         return (self.pos[0]/self.grid.grid_size[0], self.pos[1]/self.grid.grid_size[1])
 
 
-agents = [Agent(g) for _ in range(1000)]
-for a in agents:
-    print(a.get_pos())
+# agents = [Agent(g) for _ in range(1000)]
+# for a in agents:
+#     print(a.get_pos())
+sim = Simulation()
+mask = sim.mask
 screen_size = mask.shape
 screen = pygame.display.set_mode(screen_size)
 
@@ -54,25 +52,32 @@ screen = pygame.display.set_mode(screen_size)
 map = pygame.surfarray.make_surface(mask*255)
 
 clock = pygame.time.Clock()
-
+fps = []
 running = True
 while running:
-    for event in pygame.event.get():
+    for event in pygame.event.get():        
         if event.type == pygame.QUIT:
             running = False
 
     screen.fill((255, 255, 255))
     screen.blit(map, (0, 0))
-    for agent in agents:
-        # print(agent.pos)
-        agent_pos = agent.get_pos()
-        pos = int(agent_pos[0]*screen_size[0]), int(agent_pos[1]*screen_size[1])
-        pygame.draw.circle(screen, (0, 0, 255), pos, 2)
-        agent.step()
+    
+    for agent in sim.agents:
+        # print(tuple([int(x) for x in agent.pos]))
+        pygame.draw.circle(screen, (0, 0, 255), tuple([int(x) for x in agent.pos]), 2)
+        # if agent.target:
+        #     pygame.draw.circle(screen, (255, 0, 0), tuple([int(x) for x in agent.target]), 2)
 
-    clock.tick(30)
+    sim.step()
+
+    clock.tick(300)
     pygame.display.flip()
+
     # print(clock.get_fps())
+    fps.append(clock.get_fps())
+    if len(fps)>40:
+        print(np.mean(fps))
+        fps.clear()
 
 
 pygame.quit()
