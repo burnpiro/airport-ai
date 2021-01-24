@@ -4,9 +4,11 @@ import numpy as np
 from scipy.spatial import distance_matrix
 import pickle
 import os
-from math import sqrt, exp
+from math import sqrt, exp, ceil
 import json
 from datetime import datetime, timedelta
+from numba import cuda
+from numba import jit
 
 
 class Agent:
@@ -106,7 +108,7 @@ class Flights:
 
 class Simulation:
     def __init__(self):
-        size = 500
+        size = 1000
         if os.path.isfile('cache/grid.pickle'):
             with open('cache/grid.pickle', 'rb') as f:
                 self.grid = pickle.loads(f.read())
@@ -123,8 +125,8 @@ class Simulation:
 
         self.agent_radius = 1
         self.agent_mass = 1
-        self.alpha = 0.1  # social scaling constant
-        self.beta = 10  # agents personal space drop-off constant
+        self.alpha = 0.00005  # social scaling constant
+        self.beta = 30  # agents personal space drop-off constant
         self.tau = 1  # reaction time
 
         self.time = 0
@@ -149,7 +151,99 @@ class Simulation:
             for flight in flights
         ]
 
+    @staticmethod
+    @cuda.jit
+    def make_simulation_step(positions, velocities, preferred_velocities, alpha, beta, tau, mass, radius, distances_buf, normals_buf, out):
+        idx = cuda.grid(1)
+        n = positions.shape[0]
+        if idx >= n:
+            return
+
+        for i in range(n):
+            positions[i, 0] = positions[i, 0] - positions[idx, 0]
+            positions[i, 1] = positions[i, 1] - positions[idx, 1]
+
+        for i in range(n):
+            # distances_buf[i] = np.linalg.norm(positions[i])
+            distances_buf[i] = sqrt(positions[i, 0]**2 + positions[i, 1]**2)
+        # distances = np.linalg.norm(positions - positions[idx], axis=0)
+        for i in range(n):
+            normals_buf[i, 0] = -positions[i, 0]
+            normals_buf[i, 1] = positions[i, 1]
+            # normals_buf[i, 0] *= -1
+
+        social_forces = normals_buf  # reuse buffer
+
+        for i in range(n):
+            force = alpha * exp((2*radius-distances_buf[i])/beta)
+            social_forces[i, 0] = force*normals_buf[i, 0]
+            social_forces[i, 1] = force*normals_buf[i, 1]
+
+        social_forces[idx] = 0
+        social_force_x = 0
+        for i in range(n):
+            social_force_x += social_forces[i, 0]
+
+        social_force_y = 0
+        for i in range(n):
+            social_force_x += social_forces[i, 1]
+
+        attraction_force_x = mass * \
+            (preferred_velocities[idx, 0] - velocities[idx, 0])/tau
+
+        attraction_force_y = mass * \
+            (preferred_velocities[idx, 1] - velocities[idx, 1])/tau
+
+        out[idx, 0] = attraction_force_x + social_force_x
+        out[idx, 1] = attraction_force_y + social_force_y
+
     def step(self):
+        self.time += self.time_step
+        self.flights.update(self.time)
+
+        positions = np.array([a.pos for a in self.agents], dtype=np.float64)
+        preffered_velocities = np.array(
+            [a.preferred_velocity() for a in self.agents])
+        velocities = np.array([a.velocity for a in self.agents])
+
+        forces = np.empty((positions.shape[0], 2))
+        threadsperblock = 32
+        self.make_simulation_step[ceil(velocities.size/threadsperblock), threadsperblock](
+            positions,
+            velocities,
+            preffered_velocities,
+            self.alpha,
+            self.beta,
+            self.tau,
+            self.agent_mass,
+            self.agent_radius,
+            cuda.device_array(positions.shape[0]), # distances buffer
+            cuda.device_array_like(positions), # normals buffer
+            forces
+        )
+        # print(forces)
+        # forces = Simulation.make_simulation_step(
+        #     positions,
+        #     velocities,
+        #     preffered_velocities,
+        #     self.alpha,
+        #     self.beta,
+        #     self.tau,
+        #     self.agent_mass,
+        #     self.agent_radius
+        # )
+
+        for i, agent in enumerate(self.agents):
+            direction = self.grid.direction_torwards_grid(agent.grid_pos)
+            force = forces[i] + direction*10
+            agent.velocity += force  # + obstacle_force
+            # agent.velocity = preffered_velocities[i]
+            agent.pos = np.array(agent.pos) + agent.velocity
+            # gridPos, in_bounds = self.grid.pos_to_grid(agent.pos)
+            # if not in_bounds:
+            #     agent.pos = gridPos
+
+    def step2(self):
         self.time += self.time_step
         self.flights.update(self.time)
 
@@ -157,22 +251,24 @@ class Simulation:
         preffered_velocities = np.array(
             [a.preferred_velocity() for a in self.agents])
         velocities = np.array([a.velocity for a in self.agents])
-        # distances = distance_matrix(positions, positions)[..., np.newaxis]
-        # normals = np.empty((len(self.agents), len(self.agents), 2))
-        # for i in range(normals.shape[0]):
-        #     for j in range(normals.shape[1]):
-        #         normals[i, j] = (positions[i]-positions[j])[::-1]
-        # social_forces = self.alpha * \
-        #     np.exp((2*self.agent_radius-distances)/self.beta)*normals
 
-        # np.fill_diagonal(social_forces[:, :, 0], 0)
-        # np.fill_diagonal(social_forces[:, :, 1], 0)
+        distances = distance_matrix(positions, positions)[..., np.newaxis]
+        normals = np.empty((len(self.agents), len(self.agents), 2))
+        for i in range(normals.shape[0]):
+            for j in range(normals.shape[1]):
+                normals[i, j] = (positions[i]-positions[j])[::-1]
+        social_forces = self.alpha * \
+            np.exp((2*self.agent_radius-distances)/self.beta)*normals
 
-        # social_forces = social_forces.sum(axis=1)
+        np.fill_diagonal(social_forces[:, :, 0], 0)
+        np.fill_diagonal(social_forces[:, :, 1], 0)
+
+        social_forces = social_forces.sum(axis=1)
+
         attraction_forces = self.agent_mass * \
             (preffered_velocities - velocities)/self.tau
 
-        forces = attraction_forces  # + social_forces
+        forces = attraction_forces + social_forces
         for i, agent in enumerate(self.agents):
             # obstacle_force = np.zeros(2)
             # obstacles_radius = 10
@@ -182,10 +278,16 @@ class Simulation:
             #         if self.mask[pos]==0:
             #             obstacle_force += 1 * exp((self.agent_radius-sqrt(x**2+y**2))/1) * np.array([-x, -y])
 
-            agent.velocity += forces[i]  # + obstacle_force
+            direction = self.grid.direction_torwards_grid(agent.grid_pos)
+            force = forces[i] + direction*10
+
+            agent.velocity += force  # + obstacle_force
 
             # agent.velocity = preffered_velocities[i]
             agent.pos = np.array(agent.pos) + agent.velocity
+            gridPos, in_bounds = self.grid.pos_to_grid(agent.pos)
+            if not in_bounds:
+                agent.pos = gridPos
 
 
 def getTargetSize():

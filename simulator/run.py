@@ -4,6 +4,7 @@ import math
 import numpy as np
 import pygame
 from simulation import Simulation
+from skimage.transform import resize
 pygame.init()
 
 # g = Grid()
@@ -45,11 +46,12 @@ pygame.init()
 #     print(a.get_pos())
 sim = Simulation()
 mask = sim.mask
-screen_size = mask.shape
+scale = 3
+screen_size = tuple(x*scale for x in mask.shape)
 screen = pygame.display.set_mode(screen_size)
 
 # map = pygame.image.load('assets/layout_small.png')
-map = pygame.surfarray.make_surface(mask*255)
+map = pygame.surfarray.make_surface(resize(mask, screen_size)*255)
 
 clock = pygame.time.Clock()
 fps = []
@@ -64,11 +66,16 @@ while running:
     
     for agent in sim.agents:
         # print(tuple([int(x) for x in agent.pos]))
-        pygame.draw.circle(screen, (0, 0, 255), tuple([int(x) for x in agent.pos]), 2)
+        pygame.draw.circle(screen, (0, 0, 255), tuple([int(x*scale) for x in agent.pos]), 2)
         # if agent.target:
         #     pygame.draw.circle(screen, (255, 0, 0), tuple([int(x) for x in agent.target]), 2)
 
     sim.step()
+    # mouse_pos = pygame.mouse.get_pos()
+    # print(sim.grid.direction_torwards_grid(mouse_pos))
+    # direction = sim.grid.direction_torwards_grid(mouse_pos)
+
+    # pygame.draw.circle(screen, (255, 0, 0), (mouse_pos[0]+direction[0], mouse_pos[1]+direction[1]), 2)
 
     clock.tick(300)
     pygame.display.flip()
