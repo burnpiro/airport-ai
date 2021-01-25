@@ -3,8 +3,9 @@ import random
 import math
 import numpy as np
 import pygame
-from simulation import Simulation
+from Simulator import Simulation
 from skimage.transform import resize
+from imageio import imsave
 pygame.init()
 
 # g = Grid()
@@ -49,7 +50,7 @@ mask = sim.mask
 scale = 3
 screen_size = tuple(x*scale for x in mask.shape)
 screen = pygame.display.set_mode(screen_size)
-
+imsave('mask.png', mask*1.0)
 # map = pygame.image.load('assets/layout_small.png')
 map = pygame.surfarray.make_surface(resize(mask, screen_size)*255)
 

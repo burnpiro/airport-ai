@@ -27,7 +27,8 @@ services:
     environment:
       - FPS=2
     volumes:
-      - ./simulator/cache:/simulator/cache
+      # - ./simulator/cache:/simulator/cache
+      - ./simulator:/simulator
     networks:
       mainnet: {}
 networks:
