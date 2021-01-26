@@ -1,5 +1,4 @@
-import { useState } from "react";
-import useWebSocket from "react-use-websocket";
+import {useState} from "react";
 import generateFlights from "../../helpers/generateFlights";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
@@ -11,6 +10,7 @@ import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import { makeStyles } from "@material-ui/core/styles";
+import useAPI from "../../hooks/useAPI";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -31,11 +31,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const TimeTable = ({ className, onGatesChange }) => {
+export const TimeTable = ({ className }) => {
   const classes = useStyles();
-  const [socketUrl] = useState("ws://localhost:8081");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const { listOfObjects: listOfFlights } = useAPI("ws://localhost:8081", {
+    mockDataURI: "airport-ai/out.json",
+  });
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -45,16 +47,6 @@ export const TimeTable = ({ className, onGatesChange }) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-
-  const { lastMessage } = useWebSocket(socketUrl);
-
-  const listOfFlights = JSON.parse(
-    lastMessage && lastMessage.data && typeof lastMessage.data === "string"
-      ? lastMessage.data
-      : '{ "flights": [] }'
-  );
-
-  onGatesChange(listOfFlights.gates || []);
 
   const flights = generateFlights(listOfFlights.flights || []);
   return (

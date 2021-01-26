@@ -8,6 +8,9 @@ const useStyles = makeStyles((theme) => ({
   pointStyle: {
     position: "absolute",
   },
+  planeInfo: {
+    textAlign: "center",
+  },
 }));
 
 export default function Planes({
@@ -21,12 +24,12 @@ export default function Planes({
   flightNumbers = [],
 }) {
   const classes = useStyles();
-  console.log(selectedPlanes, flightNumbers, ids)
 
   const blocks = generateBlocks(points, config).map((block, id) => {
     // console.log(points)
-    const flightNumber = selectedPlanes.includes(`${ids[id]}`) ? flightNumbers.find(el => el.gateId === `${ids[id]}`) : null;
-    console.log(flightNumber)
+    const flightNumber = selectedPlanes.includes(`${ids[id]}`)
+      ? flightNumbers.find((el) => el.gateId === `${ids[id]}`)
+      : null;
     return (
       <Block
         key={ids[id]}
@@ -40,7 +43,13 @@ export default function Planes({
         }}
         onClick={onElementClick}
         name={settings.name}
-        text={flightNumber}
+        text={
+          <span className={classes.planeInfo}>
+            {flightNumber ? flightNumber.flightId : ""}
+            <br />
+            {flightNumber ? `G:${flightNumber.gateId}` : ""}
+          </span>
+        }
         message={`Num of planes: ${settings.elements}`}
       />
     );

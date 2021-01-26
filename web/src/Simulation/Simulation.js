@@ -10,7 +10,7 @@ import LayersList from "./LayersList/LayersList";
 import { AgentLayer } from "./AgentLayer/AgentLayer";
 import CastConnectedIcon from "@material-ui/icons/CastConnected";
 import PortableWifiOffIcon from "@material-ui/icons/PortableWifiOff";
-import {TimeTable} from "./TimeTable/TimeTable";
+import { TimeTable } from "./TimeTable/TimeTable";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -106,7 +106,7 @@ export default function Simulation({
   const [layersToShow, setLayersToShow] = useState([
     ...Object.keys(layout.objects),
     ...Object.keys(layout.items),
-    'gates'
+    "gates",
   ]);
 
   useEffect(() => {
@@ -130,8 +130,15 @@ export default function Simulation({
   };
 
   const onGatesChange = (newGates) => {
-    if(Array.isArray(newGates) && newGates.length > 0 && (typeof newGates[0] !== "object" || newGates[0] == null)) {
-      newGates = newGates.map((flightId, idx) => ({gateId: idx, flightId: flightId}))
+    if (
+      Array.isArray(newGates) &&
+      newGates.length > 0 &&
+      (typeof newGates[0] !== "object" || newGates[0] == null)
+    ) {
+      newGates = newGates.map((flightId, idx) => ({
+        gateId: idx,
+        flightId: flightId,
+      }));
     }
     setGates(newGates);
   };
@@ -232,18 +239,23 @@ export default function Simulation({
                 points={objDef.points}
                 ids={objDef.ids}
                 onElementClick={selectElement}
-                selectedPlanes={gates.filter(el => el.flightId != null).map(el => el.gateId)}
-                flightNumbers={gates.filter(el => el.flightId != null)}
+                selectedPlanes={gates
+                  .filter((el) => el.flightId != null)
+                  .map((el) => el.gateId)}
+                flightNumbers={gates.filter((el) => el.flightId != null)}
                 config={{
                   ...defaultPointConfig,
                   color: objDef.color,
-                  fill: objDef.fill
+                  fill: objDef.fill,
                 }}
               />
             ))}
         </div>
         <div className={classes.items}>
-          <AgentLayer onConnectionStatusChange={onStatusChange} />
+          <AgentLayer
+            onConnectionStatusChange={onStatusChange}
+            onGatesChange={onGatesChange}
+          />
         </div>
       </div>
       <ConnectionStatus status={connectionStatus} />
@@ -257,11 +269,7 @@ export default function Simulation({
         />
       )}
       {settings.showFlights && (
-        <TimeTable
-          className={classes.flightsList}
-          onClose={closeLayers}
-          onGatesChange={onGatesChange}
-        />
+        <TimeTable className={classes.flightsList} onClose={closeLayers} />
       )}
       {selectedElement != null && (
         <InfoBox

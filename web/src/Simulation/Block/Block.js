@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
     borderColor: "black",
     borderWidth: "1vh",
     borderStyle: "dashed",
-    transform: "translateX(-50%)"
+    transform: "translateX(-50%)",
   },
   clickable: {
     cursor: "pointer",
@@ -58,11 +58,17 @@ export default function Block({
       >
         <polygon points={points} style={styles} />
       </svg>
-      {text != null && <span
-        className={
-          classes.textStyle
-        }
-        style={{ left: position.minX + 0.5*(position.maxX - position.minX), top: position.minY + 0.25*(position.maxY - position.minY) }}>{text.flightId}</span>}
+      {text != null && (
+        <span
+          className={classes.textStyle}
+          style={{
+            left: position.minX + 0.5 * (position.maxX - position.minX),
+            top: position.minY + 0.25 * (position.maxY - position.minY),
+          }}
+        >
+          {text}
+        </span>
+      )}
     </Fragment>
   );
 }
