@@ -4,7 +4,7 @@ import layout from "./layout.json";
 import useScrollZoom from "../hooks/useScrollZoom";
 import Layer from "./Layer/Layer";
 import Planes from "./Layer/Planes";
-import { defaultPointConfig, selectedPlaneConfig, PLANE_ITEMS_KEY } from "../helpers/configs";
+import { defaultPointConfig, PLANE_ITEMS_KEY } from "../helpers/configs";
 import InfoBox from "./InfoBox/InfoBox";
 import LayersList from "./LayersList/LayersList";
 import { AgentLayer } from "./AgentLayer/AgentLayer";
