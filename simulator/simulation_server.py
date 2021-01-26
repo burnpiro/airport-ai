@@ -1,4 +1,4 @@
-from simulation import Simulation, getTargetSize
+from Simulator import Simulation, getTargetSize
 from Agent import Agent
 import websockets
 import asyncio

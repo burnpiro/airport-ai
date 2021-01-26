@@ -1,9 +1,8 @@
 pygame
 matplotlib
-networkx
 imageio
 numpy~=1.18.5
 scipy
 scikit-image
 websockets
-git+https://github.com/bjorkegeek/polytri.git
+numba
