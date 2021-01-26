@@ -88,7 +88,9 @@ class Grid:
 
         # self.mask = polygon2mask(self.grid_size, contour)
         self.mask = self.get_mask(data)
-        self.goals = self.get_goals(data) + [tuple(self.entrance), tuple(self.exit)]
+        self.goals = self.get_goals(data)
+        self.goals['entrance'] = tuple(self.entrance)
+        self.goals['exit'] = tuple(self.exit)
         self.gates = self.get_goals(data)
 
         self.paths = {}
@@ -101,10 +103,10 @@ class Grid:
 
         pf = PathFinding(self.mask)
 
-        for goal in self.goals:
-            self.paths[goal] = pf.dijkstra(goal, distances)
+        for goal, point in self.goals.items():
+            self.paths[goal] = pf.dijkstra(point, distances)
 
-        path = self.paths[self.goals[0]]
+        path = self.paths['exit']
         self.mask = np.zeros_like(self.mask)
         for point in path:
             self.mask[point] = 1
@@ -277,11 +279,12 @@ class Grid:
     def get_goals(self, data):
         size = (np.asarray(data['image-size'])).astype('int')
         gates = data['gates']['points']
+        ids = data['gates']['ids']
 
-        goals = []
+        goals = {}
 
-        for gate in gates:
-            goals.append(
+        for gate, id in zip(gates, ids):
+            goals[id]=(
                 tuple(
                     (np.array(gate).mean(axis=0)/size*self.grid_size).astype('int')
                 )

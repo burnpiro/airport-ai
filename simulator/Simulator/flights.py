@@ -9,8 +9,9 @@ airports = [
 
 
 class Flights:
-    def __init__(self, length, gates_num):
-        self.flights_per_day = 1000
+    def __init__(self, length, gate_ids):
+        # self.flights_per_day = 1000
+        self.flights_per_day = 100
         number_of_flights = int(self.flights_per_day * length)
 
         length = length*24*60
@@ -21,7 +22,8 @@ class Flights:
 
         self.soon_departures = {}
         self.current_arrivals = {}
-        self.gates = {i: None for i in range(gates_num)}
+        self.gates = {gate_id: None for gate_id in gate_ids}
+        self.gate_ids = gate_ids
 
         for i in range(number_of_flights):
             self.flights[i] = {
@@ -30,7 +32,7 @@ class Flights:
                 "from": random.choice(airports),
                 "to": "Luton",
                 "delay": 0,
-                "gate": random.randrange(gates_num),
+                "gate": random.choice(gate_ids),
                 "size": random.randrange(30, 70)
             }
             self.arrivals.append(i)
@@ -44,7 +46,7 @@ class Flights:
                 "to": random.choice(airports),
                 "from": "Luton",
                 "delay": 0,
-                "gate": random.randrange(gates_num),
+                "gate": random.choice(gate_ids),
                 # "size": random.randrange(50, 180)
                 "size": random.randrange(30, 70)
             }

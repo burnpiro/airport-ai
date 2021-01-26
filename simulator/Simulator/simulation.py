@@ -29,7 +29,7 @@ class Simulation:
 
         self.agents = []
 
-        self.flights = Flights(1, gates_num=len(self.grid.gates))
+        self.flights = Flights(1, gate_ids=list(self.grid.gates.keys()))
 
         self.agent_radius = 1
         self.agent_mass = 0.1
@@ -43,7 +43,8 @@ class Simulation:
     def get_flights(self):
         # arrivals = self.flights.arrivals
         # departures = self.flights.departures
-        flights = [{'id': id, **flight} for id, flight in self.flights.flights.items()]
+        flights = [{'id': id, **flight}
+                   for id, flight in self.flights.flights.items()]
         flights.sort(key=lambda x: x["scheduled"] + x["delay"])
 
         return [
@@ -57,6 +58,15 @@ class Simulation:
                 "gateNum": flight['gate'],
             }
             for flight in flights
+        ]
+
+    def get_gates(self):
+        return [
+            {
+                "gateId": gate_id,
+                "flightId": flight_id
+            }
+            for gate_id, flight_id in self.flights.gates.items()
         ]
 
     @staticmethod
@@ -118,6 +128,7 @@ class Simulation:
         for agent in agents_to_spawn:
             pos = None
             dest = None
+            to_flight = None
 
             if agent['position'] == 'entrance':
                 pos = self.grid.entrance
@@ -126,13 +137,14 @@ class Simulation:
                 pos = self.grid.gates[gate]
 
             if agent['destination'] == 'exit':
-                dest = self.grid.exit
+                dest = 'exit'
             else:
-                gate = self.flights.flights[agent['destination']]['gate']
-                dest = self.grid.gates[gate]
+                to_flight = self.flights.flights[agent['destination']]['id']
+                dest = self.flights.flights[agent['destination']]['gate']
+                # dest = self.grid.gates[gate]
 
             self.agents.append(
-                Agent(self.grid, pos, dest, agent['destination']))
+                Agent(self.grid, pos, dest, to_flight=to_flight))
 
         if len(self.agents) == 0:
             return
@@ -173,7 +185,7 @@ class Simulation:
 
         agents_to_remove = []
         for i, agent in enumerate(self.agents):
-            direction = self.grid.direction_torwards_grid(agent.grid_pos)
+            direction = self.grid.direction_torwards_grid(self.grid.grid_pos(agent.pos))
             force = forces[i] + direction*10
             agent.velocity += (force/self.agent_mass) * \
                 self.time_step  # + obstacle_force
@@ -183,12 +195,12 @@ class Simulation:
             if agent.reached_goal():
                 if agent.goal_name == 'exit':
                     agents_to_remove.append(agent)
-
                 else:
-                    gate = self.flights.flights[agent.goal_name]['gate']
-                    if self.flights.gates[gate] == agent.goal_name:
+                    gate = self.flights.flights[agent.to_flight]['gate']
+                    if self.flights.gates[gate] == gate:
                         agents_to_remove.append(agent)
                         self.flights.board_passenger(agent.goal_name)
+                        print('agent reached gate')
 
         for agent in agents_to_remove:
             self.agents.remove(agent)
