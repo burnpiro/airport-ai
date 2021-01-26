@@ -5,6 +5,14 @@ const defaultPointConfig = {
   fill: true,
 };
 
+const selectedPlaneConfig = {
+  color: "#d62828",
+  border: "#8A1919",
+  stroke: "#d62828",
+  fill: "#d62828",
+  borderWidth: 2,
+}
+
 const defaultFlightConfig = {
   id: "",
   flightNum: "",
@@ -15,4 +23,6 @@ const defaultFlightConfig = {
   gateNum: "1",
 };
 
-export { defaultPointConfig, defaultFlightConfig };
+const PLANE_ITEMS_KEY = "planes";
+
+export { defaultPointConfig, defaultFlightConfig, selectedPlaneConfig, PLANE_ITEMS_KEY };

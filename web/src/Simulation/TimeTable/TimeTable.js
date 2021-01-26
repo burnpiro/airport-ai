@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const TimeTable = ({ className }) => {
+export const TimeTable = ({ className, onGatesChange }) => {
   const classes = useStyles();
   const [socketUrl] = useState("ws://localhost:8081");
   const [page, setPage] = useState(0);
@@ -53,6 +53,8 @@ export const TimeTable = ({ className }) => {
       ? lastMessage.data
       : '{ "flights": [] }'
   );
+
+  onGatesChange(listOfFlights.gates || []);
 
   const flights = generateFlights(listOfFlights.flights || []);
   return (

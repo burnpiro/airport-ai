@@ -3,7 +3,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import layout from "./layout.json";
 import useScrollZoom from "../hooks/useScrollZoom";
 import Layer from "./Layer/Layer";
-import { defaultPointConfig } from "../helpers/configs";
+import Planes from "./Layer/Planes";
+import { defaultPointConfig, selectedPlaneConfig, PLANE_ITEMS_KEY } from "../helpers/configs";
 import InfoBox from "./InfoBox/InfoBox";
 import LayersList from "./LayersList/LayersList";
 import { AgentLayer } from "./AgentLayer/AgentLayer";
@@ -101,6 +102,7 @@ export default function Simulation({
   const [selectedElement, setSelectedElement] = useState(null);
   const [showLayers, setShowLayers] = useState(settings.showLayers);
   const [connectionStatus, setConnectionStatus] = useState(settings.showLayers);
+  const [gates, setGates] = useState([]);
   const [layersToShow, setLayersToShow] = useState([
     ...Object.keys(layout.objects),
     ...Object.keys(layout.items),
@@ -127,6 +129,13 @@ export default function Simulation({
     setConnectionStatus(newStatus);
   };
 
+  const onGatesChange = (newGates) => {
+    if(Array.isArray(newGates) && newGates.length > 0 && (typeof newGates[0] !== "object" || newGates[0] == null)) {
+      newGates = newGates.map((flightId, idx) => ({gateId: idx, flightId: flightId}))
+    }
+    setGates(newGates);
+  };
+
   const layerToggle = (layer, value) => {
     if (value) {
       setLayersToShow([...layersToShow, layer]);
@@ -142,6 +151,7 @@ export default function Simulation({
       (index !== layout.contour.length - 1 ? ", " : "")
     );
   }, "")})`;
+
   return (
     <div className={classes.root} style={{}}>
       <div
@@ -177,6 +187,7 @@ export default function Simulation({
         </div>
         <div className={classes.items}>
           {Object.entries(layout.items)
+            .filter(([name, conf]) => name !== PLANE_ITEMS_KEY)
             .filter(([name, conf]) => layersToShow.includes(name))
             .map(([name, objDef]) => (
               <Layer
@@ -212,6 +223,26 @@ export default function Simulation({
             ))}
         </div>
         <div className={classes.items}>
+          {[[PLANE_ITEMS_KEY, layout.items[PLANE_ITEMS_KEY]]]
+            .filter(([name, conf]) => layersToShow.includes(name))
+            .map(([name, objDef]) => (
+              <Planes
+                key={name}
+                settings={{ name, elements: objDef.ids.length }}
+                points={objDef.points}
+                ids={objDef.ids}
+                onElementClick={selectElement}
+                selectedPlanes={gates.filter(el => el.flightId != null).map(el => el.gateId)}
+                flightNumbers={gates.filter(el => el.flightId != null)}
+                config={{
+                  ...defaultPointConfig,
+                  color: objDef.color,
+                  fill: objDef.fill
+                }}
+              />
+            ))}
+        </div>
+        <div className={classes.items}>
           <AgentLayer onConnectionStatusChange={onStatusChange} />
         </div>
       </div>
@@ -229,6 +260,7 @@ export default function Simulation({
         <TimeTable
           className={classes.flightsList}
           onClose={closeLayers}
+          onGatesChange={onGatesChange}
         />
       )}
       {selectedElement != null && (
