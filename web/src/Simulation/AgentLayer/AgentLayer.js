@@ -6,7 +6,7 @@ import useAPI from "../../hooks/useAPI";
 export const AgentLayer = ({ onConnectionStatusChange, onGatesChange }) => {
   const { listOfObjects: listOfAgents } = useAPI("ws://localhost:8081", {
     onConnectionStatusChange: onConnectionStatusChange,
-    mockDataURI: "airport-ai/out.json",
+    mockDataURI: "/airport-ai/out.json",
   });
 
   useEffect(() => {

@@ -36,7 +36,7 @@ export const TimeTable = ({ className }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const { listOfObjects: listOfFlights } = useAPI("ws://localhost:8081", {
-    mockDataURI: "airport-ai/out.json",
+    mockDataURI: "/airport-ai/out.json",
   });
 
   const handleChangePage = (event, newPage) => {
