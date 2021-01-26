@@ -6,3 +6,4 @@ scipy
 scikit-image
 websockets
 numba
+tqdm

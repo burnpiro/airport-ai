@@ -2,16 +2,20 @@ from .grid import Grid
 import numpy as np
 
 class Agent:
-    def __init__(self, grid:Grid, pos, destination, goal_name) -> None:
-        self.path = grid.paths[tuple(destination)]
+    id=0
+    def __init__(self, grid:Grid, pos, goal_name, to_flight=None) -> None:
+        self.path = grid.paths[goal_name]
         self.speed = 1*60
         self.grid = grid
         self.pos = pos
         self.velocity = np.zeros(2)
         self.in_bounds = True
         self.grid_pos = pos
-        self.destination = destination
+        self.destination = grid.goals[goal_name]
         self.goal_name = goal_name
+        self.to_flight = to_flight
+        self.id = Agent.id + 1
+        Agent.id += 1
 
     def reached_goal(self):
         return (self.pos[0]-self.destination[0])**2 + (self.pos[1]-self.destination[1])**2 < 100

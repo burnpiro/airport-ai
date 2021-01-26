@@ -46,7 +46,8 @@ async def step_simulation():
                 "y": int(y*size[1])
             } for i, (x, y) in enumerate(points)
         ],
-        "flights": sim.get_flights()
+        "flights": sim.get_flights(),
+        "gates": sim.get_gates()
     }
 
     for socket in sockets:
