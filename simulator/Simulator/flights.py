@@ -74,7 +74,7 @@ class Flights:
             if departure not in self.soon_departures:
                 flight = self.flights[departure]
                 t = flight["scheduled"]
-                # passengers appear at airport between 45 and 5 minutes before scheduled departure
+                # passengers appear at airport between 60 and 20 minutes before scheduled departure
                 agent_time = interp1d([0, 1], [t-60, t-20])
 
                 self.soon_departures[departure] = {

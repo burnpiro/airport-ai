@@ -1,5 +1,4 @@
 from .grid import Grid
-import random
 import numpy as np
 from scipy.spatial import distance_matrix
 import pickle
@@ -15,12 +14,16 @@ from .agent import Agent
 class Simulation:
     def __init__(self):
         size = 1000
-        if os.path.isfile('cache/grid.pickle'):
-            with open('cache/grid.pickle', 'rb') as f:
+        cache_dir = os.path.join(os.path.dirname(__file__), 'cache')
+        cache_file = os.path.join(cache_dir, 'grid.pickle')
+        if os.path.isfile(cache_file):
+            with open(cache_file, 'rb') as f:
                 self.grid = pickle.loads(f.read())
         else:
             self.grid = Grid()
-            with open('cache/grid.pickle', 'wb') as f:
+            if not os.path.exists(cache_dir):
+                os.mkdir(cache_dir)
+            with open(cache_file, 'wb') as f:
                 f.write(pickle.dumps(self.grid))
 
         self.mask = self.grid.mask
@@ -185,7 +188,8 @@ class Simulation:
 
         agents_to_remove = []
         for i, agent in enumerate(self.agents):
-            direction = self.grid.direction_torwards_grid(self.grid.grid_pos(agent.pos))
+            direction = self.grid.direction_torwards_grid(
+                self.grid.grid_pos(agent.pos))
             force = forces[i] + direction*10
             agent.velocity += (force/self.agent_mass) * \
                 self.time_step  # + obstacle_force

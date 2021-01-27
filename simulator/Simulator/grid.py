@@ -1,20 +1,16 @@
-from os import close
-import pickle
-# import matplotlib.pyplot as plt
 import numpy as np
 from skimage.draw import polygon2mask
 import json
-import networkx as nx
-from scipy.spatial import Delaunay
 from collections import deque
 from math import sqrt
+import os
 
+LAYOUT_PATH = os.path.join(os.path.dirname(__file__), 'layout.json')
 
 def getTargetSize():
-    with open('layout.json') as f:
+    with open(LAYOUT_PATH) as f:
         data = json.loads(f.read())
     return data['image-size']
-
 
 class PathFinding:
     def __init__(self, mask) -> None:
@@ -46,8 +42,7 @@ class PathFinding:
 
         return paths
 
-    def dijkstra(self, dest, distances):
-        max_distance_from_walls = max(distances.values())
+    def dijkstra(self, dest, distances, max_distance_from_walls):
         distance = {dest: 0}
         queue = set([dest])
 
@@ -60,19 +55,18 @@ class PathFinding:
 
             for n in self.neighbors(v):
                 n = tuple(n)
-                new_distance = distance[v] + sqrt((n[0]-v[0])**2+(n[1]-v[1])**2) - 0.01*(
-                    distances[v] + max_distance_from_walls)
+                new_distance = distance[v] + sqrt((n[0]-v[0])**2+(n[1]-v[1])**2) + 0.3*(max_distance_from_walls/distances[v])
                 if n not in distance or distance[n] > new_distance:
                     queue.add(n)
                     distance[n] = new_distance
                     paths[n] = v
 
-        return paths
+        return paths, distance
 
 
 class Grid:
     def __init__(self) -> None:
-        with open('layout.json') as f:
+        with open(LAYOUT_PATH) as f:
             data = json.loads(f.read())
 
         self.grid_size = (400, 300)
@@ -94,8 +88,9 @@ class Grid:
         self.gates = self.get_goals(data)
 
         self.paths = {}
+        self.distances = {}
 
-        distances = self.get_distance_from_walls()
+        self.distances_from_walls = self.get_distance_from_walls()
 
         # for i in range(self.mask.shape[0]):
         #     for j in range(self.mask.shape[1]):
@@ -104,7 +99,7 @@ class Grid:
         pf = PathFinding(self.mask)
 
         for goal, point in self.goals.items():
-            self.paths[goal] = pf.dijkstra(point, distances)
+            self.paths[goal], self.distances[goal] = pf.dijkstra(point, self.distances_from_walls, max(self.distances_from_walls.values()))
 
         path = self.paths['exit']
         self.mask = np.zeros_like(self.mask)
