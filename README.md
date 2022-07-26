@@ -1,5 +1,13 @@
 # airport-ai
 
+Airport simulation for evaluation of airport gate assignment problem
+
+#### Article (Medium)
+
+[https://pokropow.medium.com/airport-simulation-for-evaluation-of-airport-gate-assignment-problem-428ec03f6a62](https://pokropow.medium.com/airport-simulation-for-evaluation-of-airport-gate-assignment-problem-428ec03f6a62)
+
+#### [Presentation](https://drive.google.com/file/d/1BsuJGNOZFpUrpOs6gdEqq1jSRVnJHGuR/view?usp=sharing)
+
 ### Visualization
 
 [https://burnpiro.github.io/airport-ai/](https://burnpiro.github.io/airport-ai/)
